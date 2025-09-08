@@ -8,14 +8,18 @@ pub enum Direction {
 
 pub struct Snake {
     body: Vec<(i32, i32)>,
+    prev_body: Vec<(i32, i32)>,
     dir: Direction,
+    next_dir: Direction,
 }
 
 impl Snake {
     pub fn new(x: i32, y: i32) -> Self {
         Snake {
-            body: vec![(x, y)],
+            body: vec![(x + 1, y), (x, y)],
+            prev_body: vec![(x + 1, y), (x, y)],
             dir: Direction::Right,
+            next_dir: Direction::Right,
         }
     }
 
@@ -31,10 +35,13 @@ impl Snake {
         {
             return;
         }
-        self.dir = dir;
+        self.next_dir = dir;
     }
 
     pub fn move_forward(&mut self) {
+        self.dir = self.next_dir;
+        self.prev_body = self.body.clone();
+
         let (x, y) = self.head();
         let new_head = match self.dir {
             Direction::Up => (x, y - 1),
@@ -49,10 +56,19 @@ impl Snake {
 
     pub fn grow(&mut self) {
         let tail = *self.body.last().unwrap();
+        self.prev_body.push(tail); // ważne!
         self.body.push(tail);
     }
 
     pub fn body(&self) -> &Vec<(i32, i32)> {
         &self.body
+    }
+
+    pub fn prev_body(&self) -> &Vec<(i32, i32)> {
+        &self.prev_body
+    }
+
+    pub fn dir(&self) -> Direction {
+        self.dir
     }
 }

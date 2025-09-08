@@ -5,7 +5,7 @@ pub struct Board {
     width: i32,
     height: i32,
     snake: Snake,
-    food: (i32, i32),
+    food: Vec<(i32, i32)>,
 }
 
 impl Board {
@@ -14,9 +14,11 @@ impl Board {
             width,
             height,
             snake: Snake::new(width / 2, height / 2),
-            food: (0, 0),
+            food: vec![],
         };
-        board.spawn_food();
+        for _ in 0..5 {
+            board.spawn_food();
+        }
         board
     }
 
@@ -26,7 +28,7 @@ impl Board {
             let x = rng.random_range(0..self.width);
             let y = rng.random_range(0..self.height);
             if !self.snake.body().contains(&(x, y)) {
-                self.food = (x, y);
+                self.food.push((x, y));
                 break;
             }
         }
@@ -44,33 +46,21 @@ impl Board {
             return false;
         }
 
-        if head == self.food {
-            self.snake.grow();
-            self.spawn_food();
+        for i in 0..self.food.len() {
+            if head == self.food[i] {
+                self.snake.grow();
+                self.food.remove(i);
+                self.spawn_food();
+                break;
+            }
         }
 
-        if self.food == (-1, -1) {
+        if self.food.is_empty() {
             println!("🏆 Wygrałeś! Plansza cała zajęta.");
             return false;
         }
 
         true
-    }
-
-    pub fn render(&self) {
-        for y in 0..self.height {
-            for x in 0..self.width {
-                if self.snake.body().contains(&(x, y)) {
-                    print!("O");
-                } else if self.food == (x, y) {
-                    print!("*");
-                } else {
-                    print!(".");
-                }
-            }
-            println!();
-        }
-        println!();
     }
 
     pub fn snake(&self) -> &Snake {
@@ -79,5 +69,9 @@ impl Board {
 
     pub fn snake_mut(&mut self) -> &mut Snake {
         &mut self.snake
+    }
+
+    pub fn food(&self) -> Vec<(i32, i32)> {
+        self.food.clone()
     }
 }
