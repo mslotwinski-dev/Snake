@@ -2,13 +2,13 @@ use macroquad::prelude::*;
 use miniquad::conf::Icon;
 
 pub async fn load_fonts() -> (Font, Font) {
-    let magic_font = load_ttf_font("assets/daydream.otf").await.unwrap();
-    let font = load_ttf_font("assets/upheavtt.ttf").await.unwrap();
+    let magic_font = load_ttf_font("src/assets/daydream.otf").await.unwrap();
+    let font = load_ttf_font("src/assets/upheavtt.ttf").await.unwrap();
     (magic_font, font)
 }
 
 pub fn window_conf() -> Conf {
-    let bytes = include_bytes!("../assets/icon.png");
+    let bytes = include_bytes!("assets/icon.png");
 
     let dyn_img = image::load_from_memory(bytes).expect("Nie udało się zdekodować assets/icon.png");
 
